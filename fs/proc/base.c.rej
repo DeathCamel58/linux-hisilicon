@@ -1,0 +1,30 @@
+diff a/fs/proc/base.c b/fs/proc/base.c	(rejected hunks)
+@@ -263,7 +269,8 @@ struct mm_struct *mm_for_maps(struct task_struct *task)
+ 
+ 	mm = get_task_mm(task);
+ 	if (mm && mm != current->mm &&
+-			!ptrace_may_access(task, PTRACE_MODE_READ)) {
++			!ptrace_may_access(task, PTRACE_MODE_READ) &&
++			!capable(CAP_SYS_RESOURCE)) {
+ 		mmput(mm);
+ 		mm = ERR_PTR(-EACCES);
+ 	}
+@@ -884,6 +891,10 @@ out_no_task:
+ 	return ret;
+ }
+ 
++#define mem_write NULL
++
++#ifndef mem_write
++/* This is a security hazard */
+ static ssize_t mem_write(struct file * file, const char __user *buf,
+ 			 size_t count, loff_t *ppos)
+ {
+@@ -942,6 +953,7 @@ out_task:
+ out_no_task:
+ 	return copied;
+ }
++#endif
+ 
+ loff_t mem_lseek(struct file *file, loff_t offset, int orig)
+ {
