@@ -230,6 +230,9 @@ enum {
 						      error-handling stage) */
 	AHCI_HFLAG_NO_DEVSLP		= BIT(17), /* no device sleep */
 	AHCI_HFLAG_NO_FBS		= BIT(18), /* no FBS */
+#ifdef CONFIG_HISI_SATA
+	AHCI_HFLAG_NO_SXS		= BIT(19), /* do not support External SATA */
+#endif
 
 #ifdef CONFIG_PCI_MSI
 	AHCI_HFLAG_MULTI_MSI		= BIT(20), /* per-port MSI(-X) */
@@ -350,6 +353,11 @@ struct ahci_host_priv {
 	unsigned int		f_rsts;
 	struct reset_control	*rsts;		/* Optional */
 	struct regulator	**target_pwrs;	/* Optional */
+#ifdef CONFIG_HISI_SATA
+#define         PCI_AHCI 0
+#define         ORI_AHCI 1
+	u32         type;
+#endif
 	struct regulator	*ahci_regulator;/* Optional */
 	struct regulator	*phy_regulator;/* Optional */
 	/*
