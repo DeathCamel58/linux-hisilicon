@@ -3,6 +3,10 @@
 obj-$(CONFIG_MTD_RAW_NAND)		+= nand.o
 obj-$(CONFIG_MTD_SM_COMMON) 		+= sm_common.o
 
+obj-$(CONFIG_MTD_NAND_HIFMC100)		+= hifmc100_nand/
+obj-$(CONFIG_MTD_SPI_NAND_HIFMC100)	+= hifmc100/
+obj-$(CONFIG_MTD_NAND_HISNFC100)	+= hisnfc100/
+obj-$(CONFIG_MTD_NAND_HINFC610)		+= hinfc610/
 obj-$(CONFIG_MTD_NAND_CAFE)		+= cafe_nand.o
 obj-$(CONFIG_MTD_NAND_AMS_DELTA)	+= ams-delta.o
 obj-$(CONFIG_MTD_NAND_DENALI)		+= denali.o
@@ -60,7 +64,7 @@ obj-$(CONFIG_MTD_NAND_ROCKCHIP)		+= rockchip-nand-controller.o
 obj-$(CONFIG_MTD_NAND_PL35X)		+= pl35x-nand-controller.o
 obj-$(CONFIG_MTD_NAND_RENESAS)		+= renesas-nand-controller.o
 
-nand-objs := nand_base.o nand_legacy.o nand_bbt.o nand_timings.o nand_ids.o
+nand-objs := nand_base.o nand_legacy.o nand_bbt.o nand_timings.o nand_ids.o hinfc_gen.o hinfc_spl_ids.o match_table.o
 nand-objs += nand_onfi.o
 nand-objs += nand_jedec.o
 nand-objs += nand_amd.o

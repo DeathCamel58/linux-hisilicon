@@ -37,6 +37,7 @@ aquantia-objs			+= aquantia_main.o
 ifdef CONFIG_HWMON
 aquantia-objs			+= aquantia_hwmon.o
 endif
+obj-$(CONFIG_MDIO_HISI_GEMAC)	+= mdio-hisi-gemac.o
 obj-$(CONFIG_AQUANTIA_PHY)	+= aquantia.o
 obj-$(CONFIG_AT803X_PHY)	+= at803x.o
 obj-$(CONFIG_AX88796B_PHY)	+= ax88796b.o

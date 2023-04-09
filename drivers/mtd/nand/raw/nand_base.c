@@ -46,6 +46,7 @@
 #include <linux/gpio/consumer.h>
 
 #include "internals.h"
+#include "hinfc_gen.h"
 
 static int nand_pairing_dist3_get_info(struct mtd_info *mtd, int page,
 				       struct mtd_pairing_info *info)
@@ -4999,7 +5000,8 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
 	const struct nand_manufacturer_desc *manufacturer_desc;
 	struct mtd_info *mtd = nand_to_mtd(chip);
 	struct nand_memory_organization *memorg;
-	int busw, ret;
+	int busw = 0
+	int ret;
 	u8 *id_data = chip->id.data;
 	u8 maf_id, dev_id;
 	u64 targetsize;
@@ -5055,6 +5057,34 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
 	/* Try to identify manufacturer */
 	manufacturer_desc = nand_get_manufacturer_desc(maf_id);
 	chip->manufacturer.desc = manufacturer_desc;
+
+#ifdef CONFIG_ARCH_HISI_BVT
+
+#ifndef CONFIG_MTD_SPI_NAND_HISI_BVT
+	/* Parallel Nand Flash */
+
+	/* The 3rd id byte holds MLC / multichip data */
+	chip->bits_per_cell = nand_get_bits_per_cell(id_data[2]);
+#endif
+
+#ifdef CONFIG_MTD_NAND_HINFC610
+	type = hinfc_get_flash_type(mtd, chip, id_data, &busw);
+#else
+	if (get_spi_nand_flash_type_hook)
+		type = get_spi_nand_flash_type_hook(mtd, id_data);
+#endif
+
+	if (type)
+		goto ident_done;
+#ifdef CONFIG_MTD_SPI_NAND_HISI_BVT
+	else {
+		pr_info("This device[%02x,%02x] cannot found in spi nand id table!!\n",
+				*maf_id, *dev_id);
+		return ERR_PTR(-ENODEV);
+	}
+#endif
+
+#endif /* endif CONFIG_ARCH_HISI_BVT */
 
 	if (!type)
 		type = nand_flash_ids;
@@ -5120,6 +5150,9 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
 					   memorg->pages_per_eraseblock);
 
 ident_done:
+#ifdef CONFIG_ARCH_HISI_BVT
+	hinfc_nand_param_adjust(mtd, chip);
+#endif
 	if (!mtd->name)
 		mtd->name = chip->parameters.model;
 
@@ -5170,9 +5203,13 @@ ident_done:
 		maf_id, dev_id);
 	pr_info("%s %s\n", nand_manufacturer_name(manufacturer_desc),
 		chip->parameters.model);
-	pr_info("%d MiB, %s, erase size: %d KiB, page size: %d, OOB size: %d\n",
+	pr_info("%dMiB, %s, page size: %d\n",
 		(int)(targetsize >> 20), nand_is_slc(chip) ? "SLC" : "MLC",
-		mtd->erasesize >> 10, mtd->writesize, mtd->oobsize);
+		mtd->writesize);
+
+	/* Print ecc type and ecc mode about hisilicon flash controller */
+	hinfc_show_info(mtd, nand_manuf_ids[maf_idx].name, type->name);
+
 	return 0;
 
 free_detect_allocation:

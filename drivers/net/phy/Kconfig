@@ -364,6 +364,13 @@ config XILINX_GMII2RGMII
 	  the Reduced Gigabit Media Independent Interface(RGMII) between
 	  Ethernet physical media devices and the Gigabit Ethernet controller.
 
+config MDIO_HISI_GEMAC
+	tristate "Hisilicon GEMAC MDIO bus controller"
+	depends on HAS_IOMEM && OF_MDIO
+	help
+	  This module provides a driver for the MDIO busses found in the
+	  Hisilicon SoC that have an Gigabit Ethernet MAC.
+
 endif # PHYLIB
 
 config MICREL_KS8995MA
