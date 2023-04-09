@@ -140,7 +140,7 @@ static void set_cpu_hi3620(int cpu, bool enable)
 	}
 }
 
-static int hi3xxx_hotplug_init(void)
+static int hi3620_hotplug_init(void)
 {
 	struct device_node *node;
 
@@ -161,10 +161,10 @@ static int hi3xxx_hotplug_init(void)
 	return 0;
 }
 
-void hi3xxx_set_cpu(int cpu, bool enable)
+void hi3620_set_cpu(int cpu, bool enable)
 {
 	if (!ctrl_base) {
-		if (hi3xxx_hotplug_init() < 0)
+		if (hi3620_hotplug_init() < 0)
 			return;
 	}
 
@@ -270,24 +270,24 @@ static inline void cpu_enter_lowpower(void)
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
-void hi3xxx_cpu_die(unsigned int cpu)
+void hi3620_cpu_die(unsigned int cpu)
 {
 	cpu_enter_lowpower();
-	hi3xxx_set_cpu_jump(cpu, phys_to_virt(0));
+	hi3620_set_cpu_jump(cpu, phys_to_virt(0));
 	cpu_do_idle();
 
 	/* We should have never returned from idle */
 	panic("cpu %d unexpectedly exit from shutdown\n", cpu);
 }
 
-int hi3xxx_cpu_kill(unsigned int cpu)
+int hi3620_cpu_kill(unsigned int cpu)
 {
 	unsigned long timeout = jiffies + msecs_to_jiffies(50);
 
-	while (hi3xxx_get_cpu_jump(cpu))
+	while (hi3620_get_cpu_jump(cpu))
 		if (time_after(jiffies, timeout))
 			return 0;
-	hi3xxx_set_cpu(cpu, false);
+	hi3620_set_cpu(cpu, false);
 	return 1;
 }
 

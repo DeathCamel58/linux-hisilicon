@@ -150,6 +150,7 @@ out:
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
+
 static void hip04_cpu_die(unsigned int l_cpu)
 {
 	unsigned int mpidr, cpu, cluster;

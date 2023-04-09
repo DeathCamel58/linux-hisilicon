@@ -258,7 +258,7 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
 	gemini-ssi1328.dtb \
 	gemini-wbd111.dtb \
 	gemini-wbd222.dtb
-dtb-$(CONFIG_ARCH_HI3xxx) += \
+dtb-$(CONFIG_ARCH_HI3620) += \
 	hi3620-hi4511.dtb
 dtb-$(CONFIG_ARCH_HIGHBANK) += \
 	highbank.dtb \
