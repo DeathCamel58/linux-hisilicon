@@ -241,4 +241,8 @@ source "drivers/peci/Kconfig"
 
 source "drivers/hte/Kconfig"
 
+source "drivers/hidmac/Kconfig"
+
+source "drivers/hisilicon/Kconfig"
+
 endmenu
